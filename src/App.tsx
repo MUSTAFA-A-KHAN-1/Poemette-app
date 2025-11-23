@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, FC } from 'react';
 
+
 // Define types for the static poem data
 interface Poem {
   id: string;
@@ -9,7 +10,7 @@ interface Poem {
   year: number;
 }
 
-// --- Static Poem Data ---
+// --- Static Poem Data (Simulating a TXT file content) ---
 const initialPoems: Poem[] = [
   {
     id: 'p1',
@@ -38,6 +39,7 @@ const initialPoems: Poem[] = [
 const App: FC = () => {
   const [selectedPoemId, setSelectedPoemId] = useState<string | null>(null);
   const [fontMode, setFontMode] = useState<'cursive' | 'serif' | 'allura'>('cursive'); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // NEW STATE for mobile menu
 
   // Dynamic style based on the selected font mode
   const fontStyle = useMemo(() => {
@@ -57,7 +59,6 @@ const App: FC = () => {
     return { fontFamily: family, lineHeight: height };
   }, [fontMode]);
 
-  // Type assertion for selectedPoem since it can be undefined
   const selectedPoem: Poem | undefined = initialPoems.find(p => p.id === selectedPoemId);
 
   // Load the first poem on component mount
@@ -67,8 +68,10 @@ const App: FC = () => {
     }
   }, [selectedPoemId]);
 
+  // Handle poem selection and close sidebar on mobile
   const handleSelectPoem = (id: string) => {
     setSelectedPoemId(id);
+    setIsSidebarOpen(false); 
   };
   
   // Set font handler
@@ -110,8 +113,25 @@ const App: FC = () => {
     }
     
     return (
-      <div className="flex flex-col h-full p-8 overflow-y-auto">
-        <div className="max-w-3xl mx-auto w-full p-10 md:p-12 bg-white rounded-xl shadow-2xl transition duration-500 ease-in-out transform hover:shadow-3xl"
+      <div className="flex flex-col h-full p-4 sm:p-8 overflow-y-auto">
+        
+        {/* Mobile Header with Menu Button (visible on small screens only) */}
+        <div className="md:hidden flex justify-between items-center pb-4 mb-4 border-b border-amber-300">
+            <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 rounded-full bg-amber-500 text-white shadow-md hover:bg-amber-600 transition"
+                aria-label="Open Poem List"
+            >
+                {/* Menu Icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <h1 className="text-xl font-extrabold text-amber-900">Poemette</h1>
+            <div className='w-10'></div> {/* Spacer */}
+        </div>
+
+        <div className="max-w-3xl mx-auto w-full p-8 md:p-12 bg-white rounded-xl shadow-2xl transition duration-500 ease-in-out transform hover:shadow-3xl"
              style={{
                backgroundImage: 'radial-gradient(circle at 100% 100%, #fef3c7, #fff7e6, #fff)',
                border: '1px solid #f59e0b20'
@@ -120,10 +140,10 @@ const App: FC = () => {
           {/* Header */}
           <header className="mb-8 pb-4 border-b-2 border-amber-300 border-opacity-50 text-center">
             {/* Title uses the dynamic font style */}
-            <h1 className="text-5xl text-amber-900 font-extrabold mb-2 leading-tight" style={fontStyle}>
+            <h1 className="text-4xl sm:text-5xl text-amber-900 font-extrabold mb-2 leading-tight" style={fontStyle}>
               {selectedPoem.title}
             </h1>
-            <h2 className="text-2xl font-serif text-gray-600 italic mt-3">
+            <h2 className="text-xl sm:text-2xl font-serif text-gray-600 italic mt-3">
               — {selectedPoem.author}
             </h2>
           </header>
@@ -132,7 +152,8 @@ const App: FC = () => {
           <main className="text-center">
             {/* Poem content uses the dynamic font style */}
             <div
-              className="text-2xl text-gray-800 whitespace-pre-wrap leading-relaxed"
+              // Reduced mobile font size slightly for better fit
+              className="text-lg sm:text-2xl text-gray-800 whitespace-pre-wrap leading-relaxed"
               style={fontStyle}
             >
               {selectedPoem.content}
@@ -149,16 +170,30 @@ const App: FC = () => {
 
 
   return (
-    <div className="flex h-screen antialiased" style={{ backgroundColor: '#fdf6e3' /* Light Cream/Parchment Background */ }}>
+    <div className="flex h-screen antialiased overflow-hidden" style={{ backgroundColor: '#fdf6e3' }}>
+      
       {/* Font link added to the DOM */}
       <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet" />
-
-      {/* Sidebar - Poem List (Book Spine Look) */}
-      <div className="w-80 border-r border-amber-300 bg-amber-50 shadow-lg flex flex-col">
-        <div className="p-4 border-b border-amber-300 bg-amber-200">
+      
+      {/* 1. Sidebar (Visible on MD screens and above, or when isSidebarOpen is true) */}
+      <div 
+        className={`fixed inset-y-0 left-0 z-40 md:static md:translate-x-0 w-80 border-r border-amber-300 bg-amber-50 shadow-lg flex flex-col transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:block`}
+      >
+        <div className="p-4 border-b border-amber-300 bg-amber-200 flex justify-between items-center">
           <h2 className="text-2xl font-extrabold text-amber-900 tracking-wider" style={{ fontFamily: 'Georgia, serif' }}>
             Poemette
           </h2>
+          {/* Close button for mobile */}
+          <button 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="md:hidden p-1 rounded-full text-amber-700 hover:bg-amber-300 transition"
+              aria-label="Close menu"
+          >
+              {/* X Icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
         
         {/* 2. Font Selection Segmented Control */}
@@ -196,9 +231,17 @@ const App: FC = () => {
           Vite React App (TSX)
         </div>
       </div>
+      
+      {/* Backdrop for mobile (appears when sidebar is open) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
 
       {/* Main Content - Viewer */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <PoemViewer />
       </div>
     </div>
