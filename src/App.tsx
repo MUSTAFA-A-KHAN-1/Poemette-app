@@ -115,20 +115,9 @@ const App: FC = () => {
     return (
       <div className="flex flex-col h-full p-4 sm:p-8 overflow-y-auto">
         
-        {/* Mobile Header with Menu Button (visible on small screens only) */}
-        <div className="md:hidden flex justify-between items-center pb-4 mb-4 border-b border-amber-300">
-            <button 
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 rounded-full bg-amber-500 text-white shadow-md hover:bg-amber-600 transition"
-                aria-label="Open Poem List"
-            >
-                {/* Menu Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
+        {/* Mobile Header: KEEPING TITLE ONLY, REMOVING THE OLD BUTTON */}
+        <div className="md:hidden flex justify-center items-center pb-4 mb-4 border-b border-amber-300">
             <h1 className="text-xl font-extrabold text-amber-900">Poemette</h1>
-            <div className='w-10'></div> {/* Spacer */}
         </div>
 
         <div className="max-w-3xl mx-auto w-full p-8 md:p-12 bg-white rounded-xl shadow-2xl transition duration-500 ease-in-out transform hover:shadow-3xl"
@@ -170,7 +159,7 @@ const App: FC = () => {
 
 
   return (
-    <div className="flex h-screen antialiased overflow-hidden" style={{ backgroundColor: '#fdf6e3' }}>
+    <div className="flex h-screen antialiased overflow-hidden" style={{ backgroundColor: '#fdf6e3' /* Light Cream/Parchment Background */ }}>
       
       {/* Font link added to the DOM */}
       <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet" />
@@ -185,7 +174,7 @@ const App: FC = () => {
           <h2 className="text-2xl font-extrabold text-amber-900 tracking-wider" style={{ fontFamily: 'Georgia, serif' }}>
             Poemette
           </h2>
-          {/* Close button for mobile */}
+          {/* Close button for mobile (inside the sidebar) */}
           <button 
               onClick={() => setIsSidebarOpen(false)} 
               className="md:hidden p-1 rounded-full text-amber-700 hover:bg-amber-300 transition"
@@ -244,6 +233,19 @@ const App: FC = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <PoemViewer />
       </div>
+      
+      {/* FIXED MENU BUTTON: Fixed to the bottom right on mobile screens */}
+      <button 
+        onClick={() => setIsSidebarOpen(true)}
+        className="fixed bottom-4 right-4 z-50 md:hidden p-4 rounded-full bg-amber-700 text-white shadow-xl hover:bg-amber-800 transition transform hover:scale-105"
+        aria-label="Open Poem List"
+      >
+          {/* Menu Icon (3 bars) */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+      </button>
+
     </div>
   );
 };
