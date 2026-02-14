@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo, FC } from 'react';
+import React, { useState, useEffect, useMemo, type FC } from 'react';
 
 
-// Define types for the static poem data
+// Define types for the poem data
 interface Poem {
   id: string;
   title: string;
@@ -10,36 +10,31 @@ interface Poem {
   year: number;
 }
 
-// --- Static Poem Data (Simulating a TXT file content) ---
-const initialPoems: Poem[] = [
-  {
-    id: 'p1',
-    title: 'A Red, Red Rose',
-    author: 'Robert Burns',
-    content: "O my Luve is like a red, red rose,\nThat’s newly sprung in June;\nO my Luve is like the melody,\nThat’s sweetly play’d in tune.\n\nAs fair art thou, my bonnie lass,\nSo deep in luve am I;\nAnd I will luve thee still, my dear,\nTill a’ the seas gang dry.",
-    year: 1794,
-  },
-  {
-    id: 'p2',
-    title: 'The Road Not Taken',
-    author: 'Robert Frost',
-    content: "Two roads diverged in a yellow wood,\nAnd sorry I could not travel both\nAnd be one traveler, long I stood\nAnd looked down one as far as I could\nTo where it bent in the undergrowth;\n\nThen took the other, as just as fair,\nAnd having perhaps the better claim,\nBecause it was grassy and wanted wear;\nThough as for that the passing there\nHad worn them really about the same.",
-    year: 1916,
-  },
-  {
-    id: 'p3',
-    title: 'Sonnet 18',
-    author: 'William Shakespeare',
-    content: "Shall I compare thee to a summer's day?\nThou art more lovely and more temperate:\nRough winds do shake the darling buds of May,\nAnd summer's lease hath all too short a date:\n\nSometime too hot the eye of heaven shines,\nAnd often is his gold complexion dimm'd;\nAnd every fair from fair sometime declines,\nBy chance or nature's changing course untrimm'd.",
-    year: 1609,
-  },
-];
-
 // --- Component Definition ---
 const App: FC = () => {
+  const [poems, setPoems] = useState<Poem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPoemId, setSelectedPoemId] = useState<string | null>(null);
   const [fontMode, setFontMode] = useState<'cursive' | 'serif' | 'allura'>('cursive'); 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // NEW STATE for mobile menu
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Fetch poems from JSON file
+  useEffect(() => {
+    fetch('/Poemette-app/poems.json')
+      .then(response => response.json())
+      .then(data => {
+        setPoems(data);
+        setLoading(false);
+        // Set the first poem as selected after loading
+        if (data.length > 0) {
+          setSelectedPoemId(data[0].id);
+        }
+      })
+      .catch(error => {
+        console.error('Error loading poems:', error);
+        setLoading(false);
+      });
+  }, []);
 
   // Dynamic style based on the selected font mode
   const fontStyle = useMemo(() => {
@@ -59,14 +54,7 @@ const App: FC = () => {
     return { fontFamily: family, lineHeight: height };
   }, [fontMode]);
 
-  const selectedPoem: Poem | undefined = initialPoems.find(p => p.id === selectedPoemId);
-
-  // Load the first poem on component mount
-  useEffect(() => {
-    if (initialPoems.length > 0 && !selectedPoemId) {
-      setSelectedPoemId(initialPoems[0].id);
-    }
-  }, [selectedPoemId]);
+  const selectedPoem: Poem | undefined = poems.find(p => p.id === selectedPoemId);
 
   // Handle poem selection and close sidebar on mobile
   const handleSelectPoem = (id: string) => {
@@ -79,7 +67,7 @@ const App: FC = () => {
     setFontMode(mode);
   };
 
-  // Component for Poem Card - explicitly typed props
+  // Component for Poem Card
   const PoemCard: FC<{ poem: Poem }> = ({ poem }) => (
     <div
       onClick={() => handleSelectPoem(poem.id)}
@@ -89,7 +77,6 @@ const App: FC = () => {
           : 'hover:bg-amber-50 text-gray-700'
       }`}
     >
-      {/* Poem title uses the dynamic font style */}
       <h3 className="text-xl font-bold truncate" style={fontStyle}>
         {poem.title}
       </h3>
@@ -114,8 +101,6 @@ const App: FC = () => {
     
     return (
       <div className="flex flex-col h-full p-4 sm:p-8 overflow-y-auto">
-        
-        {/* Mobile Header: KEEPING TITLE ONLY, REMOVING THE OLD BUTTON */}
         <div className="md:hidden flex justify-center items-center pb-4 mb-4 border-b border-amber-300">
             <h1 className="text-xl font-extrabold text-amber-900">Poemette</h1>
         </div>
@@ -126,9 +111,7 @@ const App: FC = () => {
                border: '1px solid #f59e0b20'
              }}
         >
-          {/* Header */}
           <header className="mb-8 pb-4 border-b-2 border-amber-300 border-opacity-50 text-center">
-            {/* Title uses the dynamic font style */}
             <h1 className="text-4xl sm:text-5xl text-amber-900 font-extrabold mb-2 leading-tight" style={fontStyle}>
               {selectedPoem.title}
             </h1>
@@ -137,11 +120,8 @@ const App: FC = () => {
             </h2>
           </header>
 
-          {/* Content */}
           <main className="text-center">
-            {/* Poem content uses the dynamic font style */}
             <div
-              // Reduced mobile font size slightly for better fit
               className="text-lg sm:text-2xl text-gray-800 whitespace-pre-wrap leading-relaxed"
               style={fontStyle}
             >
@@ -157,14 +137,11 @@ const App: FC = () => {
     );
   };
 
-
   return (
-    <div className="flex h-screen antialiased overflow-hidden" style={{ backgroundColor: '#fdf6e3' /* Light Cream/Parchment Background */ }}>
-      
-      {/* Font link added to the DOM */}
+    <div className="flex h-screen antialiased overflow-hidden" style={{ backgroundColor: '#fdf6e3' }}>
       <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet" />
       
-      {/* 1. Sidebar (Visible on MD screens and above, or when isSidebarOpen is true) */}
+      {/* Sidebar */}
       <div 
         className={`fixed inset-y-0 left-0 z-40 md:static md:translate-x-0 w-80 border-r border-amber-300 bg-amber-50 shadow-lg flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -174,18 +151,16 @@ const App: FC = () => {
           <h2 className="text-2xl font-extrabold text-amber-900 tracking-wider" style={{ fontFamily: 'Georgia, serif' }}>
             Poemette
           </h2>
-          {/* Close button for mobile (inside the sidebar) */}
           <button 
               onClick={() => setIsSidebarOpen(false)} 
               className="md:hidden p-1 rounded-full text-amber-700 hover:bg-amber-300 transition"
               aria-label="Close menu"
           >
-              {/* X Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
         
-        {/* 2. Font Selection Segmented Control */}
+        {/* Font Selection */}
         <div className="p-4 border-b border-amber-200">
             <p className="text-sm text-amber-700 font-semibold mb-2">Reading Style:</p>
             <div className="flex justify-between bg-amber-100 rounded-lg p-1 space-x-1 shadow-inner">
@@ -198,7 +173,6 @@ const App: FC = () => {
                                 ? 'bg-amber-600 text-white shadow-md'
                                 : 'text-amber-700 hover:bg-amber-300'
                         }`}
-                        // Apply font-specific style only to the button content for preview
                         style={{ fontFamily: mode === 'allura' ? 'Allura, sans-serif' : (mode === 'cursive' ? 'cursive, sans-serif' : 'serif') }}
                     >
                         {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -212,16 +186,20 @@ const App: FC = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {initialPoems.map(poem => (
-            <PoemCard key={poem.id} poem={poem} />
-          ))}
+          {loading ? (
+            <div className="p-4 text-center text-gray-500">Loading poems...</div>
+          ) : (
+            poems.map(poem => (
+              <PoemCard key={poem.id} poem={poem} />
+            ))
+          )}
         </div>
         <div className="p-2 text-center text-xs text-amber-600 border-t border-amber-300 bg-amber-100">
           Vite React App (TSX)
         </div>
       </div>
       
-      {/* Backdrop for mobile (appears when sidebar is open) */}
+      {/* Backdrop for mobile */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
@@ -234,18 +212,16 @@ const App: FC = () => {
         <PoemViewer />
       </div>
       
-      {/* FIXED MENU BUTTON: Fixed to the bottom right on mobile screens */}
+      {/* Fixed menu button for mobile */}
       <button 
         onClick={() => setIsSidebarOpen(true)}
         className="fixed bottom-4 right-4 z-50 md:hidden p-4 rounded-full bg-amber-700 text-white shadow-xl hover:bg-amber-800 transition transform hover:scale-105"
         aria-label="Open Poem List"
       >
-          {/* Menu Icon (3 bars) */}
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
       </button>
-
     </div>
   );
 };

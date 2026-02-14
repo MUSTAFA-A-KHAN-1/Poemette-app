@@ -1,0 +1,31 @@
+[
+  {
+    "id": "p1",
+    "title": "What is a poem?",
+    "author": "Dalayla",
+    "year": 2025,
+    "content": "What is a Poem if it does not breathe\nIf it does not feel pain if it Cannot grieve\nWhat is a Poem if it hasn't felt\nIf it cannot care if it took no courage to share\nWhat is a Poem if it has no memory, no story, no tears\nPoetry cannot be created in an instant\nIt's a portrait of years of life that's been lived\nAnd tear stains cheeks.\n\nIt's the scent of rain and rustling leaves\nIt's late night laughter in a Kitchen Floor\nThe light in the hall spilling out of the door\nThe feeling of fingers laced in your own\nThe voice of someone you love on the other side of the phone\nSo when you ask me how I Feel . . .\n\nI feel betrayed but I do not feel threatened in the least\nA voice wants a story well\nAll it can do is speak so take it if you like\nBut if you think that's Poetry you're terribly wrong\nTake the life from the Poem & the whole Poem is gone"
+  },
+  {
+    "id": "p2",
+    "title": "A Red, Red Rose",
+    "author": "Robert Burns",
+    "year": 1794,
+    "content": "O my Luve is like a red, red rose,\nThat’s newly sprung in June;\nO my Luve is like the melody,\nThat’s sweetly play’d in tune.\n\nAs fair art thou, my bonnie lass,\nSo deep in luve am I;\nAnd I will luve thee still, my dear,\nTill a’ the seas gang dry."
+  },
+  {
+    "id": "p3",
+    "title": "The Road Not Taken",
+    "author": "Robert Frost",
+    "year": 1916,
+    "content": "Two roads diverged in a yellow wood,\nAnd sorry I could not travel both\nAnd be one traveler, long I stood\nAnd looked down one as far as I could\nTo where it bent in the undergrowth;\n\nThen took the other, as just as fair,\nAnd having perhaps the better claim,\nBecause it was grassy and wanted wear;\nThough as for that the passing there\nHad worn them really about the same."
+  },
+  {
+    "id": "p4",
+    "title": "Sonnet 18",
+    "author": "William Shakespeare",
+    "year": 1609,
+    "content": "Shall I compare thee to a summer's day?\nThou art more lovely and more temperate:\nRough winds do shake the darling buds of May,\nAnd summer's lease hath all too short a date:\n\nSometime too hot the eye of heaven shines,\nAnd often is his gold complexion dimm'd;\nAnd every fair from fair sometime declines,\nBy chance or nature's changing course untrimm'd."
+  }
+]
+
